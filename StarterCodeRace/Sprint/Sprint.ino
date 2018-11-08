@@ -83,19 +83,24 @@ void updatePWMs(float totalDistanceLeft, float totalDistanceRight, float vL, flo
    *    angleRadAccum: the angle integrated over time (note: not the same as error)
    */
 
-
+   // Increasing desired distance with every call of updatePWM
    Dist += delta_t*0.4;
+
+   // First error block (notice the offset of Dist)
    errorA = -angleRad + -0.05*(totalDistanceLeft + totalDistanceRight - Dist);
 
-   
+   // Riemann sum to integrate first error over time
    sumA += delta_t*errorA;
 
+   // Velocity error for left and right wheel
    errorL = (Kp*errorA + Ki*sumA) - vL;
    errorR = (Kp*errorA + Ki*sumA) - vR;
 
+   // Riemann sum to integrate velocity error over time
    sumL += delta_t*errorL;
    sumR += delta_t*errorR;
-   
+
+   // Calculate PWM signals for each motor
    leftMotorPWM = 1.1*(Jp*errorL + Ji*sumL);
    rightMotorPWM = 1.18*(Jp*errorR + Ji*sumR);
 }
